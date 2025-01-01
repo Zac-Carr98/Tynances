@@ -13,7 +13,6 @@ SCOPES = [
     'https://www.googleapis.com/auth/drive'
 ]
 
-CREDENTIALS_FILE = os.getenv('CREDENTIALS_FILE')
 SPREADSHEET_NAME = os.getenv('SPREADSHEET_NAME')
 
 class GoogleSheetHandler:

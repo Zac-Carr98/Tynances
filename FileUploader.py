@@ -8,37 +8,33 @@ from CategorySorter import CategorySorter
 class FileUploader:
     def __init__(self):
         self.category_sorter = CategorySorter()
-        # Load the worksheet name from the .env file
-        self.worksheet_name = os.getenv('WORKSHEET_NAME')
-
         self.csvFilePath = ""
         self.credentials_path = ""
 
         self.window = tk.Tk()
         self.window.title("Tynances")
-        self.window.geometry("300x300")
-
-       
+        self.window.geometry("500x200")
         
+        self.worksheet_name = tk.StringVar()
         #CSV Filepath TextBox
+        tk.Label(self.window, text="CSV File Path: ").grid(row=0, column=0, sticky="w")
         self.csv_text_box = tk.Entry(self.window, width=30)
-        self.csv_text_box.pack(pady=10)
+        self.csv_text_box.grid(row=0, column=1)
+        self.upload_csv_button = tk.Button(self.window, text=" ... ", command=self.on_choose_csv).grid(row=0, column=2, padx=3)
 
-         # Upload CSV Button
-        self.upload_csv_button = tk.Button(self.window, width=30, text="Upload CSV File", command=self.on_choose_csv)
-        self.upload_csv_button.pack(pady=10)
-
-        # Credentials Filepath Text Box
+        # Credentials Filepath
+        tk.Label(self.window, text="Credentials JSON File Path: ").grid(row=1, column=0, sticky="w")
         self.credentials_path_text_box = tk.Entry(self.window, width=30)
-        self.credentials_path_text_box.pack(pady=10)
+        self.credentials_path_text_box.grid(row=1, column=1)
+        self.get_credentials_button = tk.Button(self.window, text=" ... ", command=self.on_get_credentials_json).grid(row=1, column=2)
 
-        #Get Credentials Button
-        self.get_credentials_button = tk.Button(self.window, width=30, text="Upload Credentials JSON", command=self.on_get_credentials_json)
-        self.get_credentials_button.pack(pady=10)
+        # WorkSheet Name Text Box
+        tk.Label(self.window, text="Worksheet Title: ").grid(row=2, column=0, sticky="w")
+        self.worksheet_name_text_box = tk.Entry(self.window, width=30, textvariable=self.worksheet_name)
+        self.worksheet_name_text_box.grid(row=2, column=1)
 
         # Do The Thing button
-        self.action_button = tk.Button(self.window, width=30, text="Populate Sheet", command=self.on_populate_sheet)
-        self.action_button.pack(pady=10)
+        self.action_button = tk.Button(self.window, width=30, text="Populate Sheet", command=self.on_populate_sheet).grid(row=3, column=0, columnspan=3)
 
     def on_choose_csv(self):
         filepath = filedialog.askopenfilename()
@@ -63,7 +59,7 @@ class FileUploader:
 
         # Use the worksheet name from the .env file
         if self.worksheet_name:
-            worksheet = sheet_handler.get_worksheet(self.worksheet_name)
+            worksheet = sheet_handler.get_worksheet(self.worksheet_name.get())
             if worksheet:
                 sheet_handler.update_worksheet(worksheet, category_data)
         else:
