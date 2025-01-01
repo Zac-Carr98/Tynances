@@ -34,7 +34,7 @@ class FileUploader:
         self.credentials_path_text_box.pack(pady=10)
 
         #Get Credentials Button
-        self.get_credentials_button = tk.Button(self.window, width=30, text="Upload Credentials JSON")
+        self.get_credentials_button = tk.Button(self.window, width=30, text="Upload Credentials JSON", command=self.on_get_credentials_json)
         self.get_credentials_button.pack(pady=10)
 
         # Do The Thing button
