@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  python-app:
+    build: .
+    container_name: python-app
+    environment:
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    restart: unless-stopped
