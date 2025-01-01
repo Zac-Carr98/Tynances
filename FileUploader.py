@@ -49,21 +49,42 @@ class FileUploader:
             self.credentials_path_text_box.insert(0, filepath)
 
     def on_populate_sheet(self):
+        if not self.worksheet_name.get():
+            print("No worksheet name given")
+            return
+
         # Read the CSV file
-        df = pd.read_csv(self.csvFilePath)
+        df = self.format_csv()
 
         # Categorize data
         category_data = self.category_sorter.categorize_data(df)
 
-        sheet_handler = GoogleSheetHandler(self.credentials_path)
+        sheet_handler = GoogleSheetHandler(self.credentials_path, self.worksheet_name.get())
 
         # Use the worksheet name from the .env file
-        if self.worksheet_name:
-            worksheet = sheet_handler.get_worksheet(self.worksheet_name.get())
-            if worksheet:
-                sheet_handler.update_worksheet(worksheet, category_data)
-        else:
-            print("No worksheet name found in .env file.")
+        sheet_handler.update_worksheet(category_data)
+            
 
     def run(self):
         self.window.mainloop()
+
+    def format_csv(self):
+        # input file
+
+        # Read the CSV into dataframe
+        df = pd.read_csv(self.csvFilePath, skiprows=3)
+
+        # Drop first transaction number column
+        df = df.drop(df.columns[0], axis=1)
+
+        # Check column 5 for values
+        positive = df.iloc[:, 4] > 0
+
+        # Shift column 5 values into column 4
+        df.loc[positive, df.columns[3]] = df.loc[positive, df.columns[4]]
+
+        # Delete last 4 columns
+        deleted_columns = [4, 5, 6, 7]
+
+        # Final dataframe to use
+        return df.drop(df.columns[deleted_columns], axis=1)

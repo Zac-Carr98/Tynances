@@ -16,11 +16,12 @@ SCOPES = [
 SPREADSHEET_NAME = os.getenv('SPREADSHEET_NAME')
 
 class GoogleSheetHandler:
-    def __init__(self, credentials_path):
+    def __init__(self, credentials_path, worksheet_name):
         self.credentials = Credentials.from_service_account_file(credentials_path, scopes=SCOPES)
         self.client = gspread.authorize(self.credentials)
         self.sheet = self.open_or_create_spreadsheet()
-
+        self.worksheet = self.get_worksheet(worksheet_name)
+        
     def open_or_create_spreadsheet(self):
         try:
             return self.client.open(SPREADSHEET_NAME)
@@ -34,18 +35,19 @@ class GoogleSheetHandler:
             print(f"Worksheet '{worksheet_name}' not found.")
             return None
 
-    def update_worksheet(self, worksheet, category_data, padding_rows=0, padding_cols=7):
-        worksheet.clear()
+    def update_worksheet(self, category_data, padding_rows=0, padding_cols=7):
+
+        self.worksheet.clear()
 
         # Prepare headers and data
         headers = self.prepare_headers(category_data)
-        worksheet.update_cell(1 + padding_rows, 1 + padding_cols, headers[0])
-        worksheet.update(f"{chr(65 + padding_cols)}{1 + padding_rows}", [headers])
+        self.worksheet.update_cell(1 + padding_rows, 1 + padding_cols, headers[0])
+        self.worksheet.update(f"{chr(65 + padding_cols)}{1 + padding_rows}", [headers])
 
         all_data = self.prepare_data_for_update(category_data)
-        worksheet.update(f"{chr(65 + padding_cols)}{2 + padding_rows}", all_data)
+        self.worksheet.update(f"{chr(65 + padding_cols)}{2 + padding_rows}", all_data)
 
-        self.calculate_sums(worksheet)
+        self.calculate_sums()
         print("Data successfully uploaded and formatted in Google Sheets.")
 
     def prepare_headers(self, category_data):
@@ -76,60 +78,24 @@ class GoogleSheetHandler:
             all_data.append(row)
         return all_data
 
-    def calculate_sums(self, worksheet):
+    def calculate_sums(self):
         # Calculate Sums
         # Total
-        worksheet.update_cell(1, 1, 'Net:')
-        worksheet.update_cell(1, 2, '=sum(E2:E)')
-        # Eating Out
-        worksheet.update_cell(2, 4, 'Eating Out')
-        worksheet.update_cell(2, 5, '=sum(K2:K)')
+        self.worksheet.update_cell(1, 1, 'Net:')
+        self.worksheet.update_cell(1, 2, '=sum(E2:E)')
 
-        # Groceries
-        worksheet.update_cell(3, 4, 'Groceries')
-        worksheet.update_cell(3, 5, '=sum(O2:O)')
+        categories = ['Eating Out:', 'Groceries', 'Home Reno', 'Utilities','Payroll', 'Gas', 'Venmo', 'Amazon', 'Subscriptions', 'Fun Money', 'Medical', 'Unplanned', 'Other']
+        catTotals = ['=sum(K2:K)', '=sum(O2:O)', '=sum(S2:S)', '=sum(W2:W)', '=sum(AA2:AA)', '=sum(AE2:AE)', '=sum(AI2:AI)', '=sum(AM2:AM)', '=sum(AQ2:AQ)', 
+                     '=sum(AU2:AU)', '=sum(AY2:AY)', '=sum(BC2:BC)', '=sum(BG2:BG)']
 
-        # Home Reno
-        worksheet.update_cell(4, 4, 'Home Reno')
-        worksheet.update_cell(4, 5, '=sum(S2:S)')  # Home Reno
+        total_cells = self.worksheet.range('E2:E14')
+        title_cells = self.worksheet.range('D2:D14')
+        for i in range(len(categories)):
+            title_cells[i].value = categories[i]
+            total_cells[i].value = catTotals[i]
 
-        # Utilities
-        worksheet.update_cell(5, 4, 'Utilities')
-        worksheet.update_cell(5, 5, '=sum(W2:W)')
+        self.worksheet.update_cells(title_cells)
+        self.worksheet.update_cells(total_cells,value_input_option='USER_ENTERED')
 
-        # Payroll
-        worksheet.update_cell(6, 4, 'Payroll')
-        worksheet.update_cell(6, 5, '=sum(AA2:AA)')
-
-        # Gas
-        worksheet.update_cell(7, 4, 'Gas')
-        worksheet.update_cell(7, 5, '=sum(AE2:AE)')
-
-        # Venmo
-        worksheet.update_cell(8, 4, 'Venmo')
-        worksheet.update_cell(8, 5, '=sum(AI2:AI)')
-
-        # Amazon
-        worksheet.update_cell(9, 4, 'Amazon')
-        worksheet.update_cell(9, 5, '=sum(AM2:AM)')
-
-        # Subscriptions
-        worksheet.update_cell(10, 4, 'Subscriptions')
-        worksheet.update_cell(10, 5, '=sum(AQ2:AQ)')
-
-        # Fun Money
-        worksheet.update_cell(11, 4, 'Fun Money')
-        worksheet.update_cell(11, 5, '=sum(AU2:AU)')
-
-        # Medical
-        worksheet.update_cell(12, 4, 'Medical')
-        worksheet.update_cell(12, 5, '=sum(AY2:AY)')
-
-        # Unplanned
-        worksheet.update_cell(13, 4, 'Unplanned')
-        worksheet.update_cell(13, 5, '=sum(BC2:BC)')
-
-        # Other
-        worksheet.update_cell(14, 4, 'Other')
-        worksheet.update_cell(14, 5, '=sum(BG2:BG)')
+        
 
