@@ -17,8 +17,8 @@ CREDENTIALS_FILE = os.getenv('CREDENTIALS_FILE')
 SPREADSHEET_NAME = os.getenv('SPREADSHEET_NAME')
 
 class GoogleSheetHandler:
-    def __init__(self):
-        self.credentials = Credentials.from_service_account_file(CREDENTIALS_FILE, scopes=SCOPES)
+    def __init__(self, credentials_path):
+        self.credentials = Credentials.from_service_account_file(credentials_path, scopes=SCOPES)
         self.client = gspread.authorize(self.credentials)
         self.sheet = self.open_or_create_spreadsheet()
 
