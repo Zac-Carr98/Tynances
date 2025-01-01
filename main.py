@@ -8,9 +8,4 @@ import tkinter as tk
 # Main execution
 if __name__ == "__main__":
     file_uploader = FileUploader()
-
-    # Create a GUI window with a button to upload the CSV file
-    root = tk.Tk()
-    upload_button = tk.Button(root, text="Upload CSV file", command=file_uploader.upload_file)
-    upload_button.pack()
-    root.mainloop()
+    file_uploader.run()
