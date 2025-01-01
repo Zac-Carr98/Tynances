@@ -1,0 +1,5 @@
+CREDENTIALS_FILE = 'bankstatementsorter-566a0c45d1f1.json'
+CATEGORY_ORDER = EatingOut,Groceries,Home Reno,Utilities,Payroll,Gas,Venmo,Amazon,Subscriptions,Fun Money,Medical,Unplanned
+SPREADSHEET_NAME = 'Sharp Budget 2024'
+WORKSHEET_NAME = ''
+TZ=America/Chicago
