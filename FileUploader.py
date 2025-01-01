@@ -2,11 +2,13 @@ import pandas as pd
 import tkinter as tk
 from tkinter import filedialog
 import os
+from GoogleSheetHandler import GoogleSheetHandler
+from CategorySorter import CategorySorter
 
 class FileUploader:
-    def __init__(self, category_sorter, sheet_handler):
-        self.category_sorter = category_sorter
-        self.sheet_handler = sheet_handler
+    def __init__(self):
+        self.category_sorter = CategorySorter()
+        self.sheet_handler = GoogleSheetHandler()
         # Load the worksheet name from the .env file
         self.worksheet_name = os.getenv('WORKSHEET_NAME')
 

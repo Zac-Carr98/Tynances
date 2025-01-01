@@ -19,14 +19,14 @@ SPREADSHEET_NAME = os.getenv('SPREADSHEET_NAME')
 class GoogleSheetHandler:
     def __init__(self):
         self.credentials = Credentials.from_service_account_file(CREDENTIALS_FILE, scopes=SCOPES)
-        self.gc = gspread.authorize(self.credentials)
+        self.client = gspread.authorize(self.credentials)
         self.sheet = self.open_or_create_spreadsheet()
 
     def open_or_create_spreadsheet(self):
         try:
-            return self.gc.open(SPREADSHEET_NAME)
+            return self.client.open(SPREADSHEET_NAME)
         except gspread.exceptions.SpreadsheetNotFound:
-            return self.gc.create(SPREADSHEET_NAME)
+            return self.client.create(SPREADSHEET_NAME)
 
     def get_worksheet(self, worksheet_name):
         try:
