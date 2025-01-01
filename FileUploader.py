@@ -12,14 +12,50 @@ class FileUploader:
         # Load the worksheet name from the .env file
         self.worksheet_name = os.getenv('WORKSHEET_NAME')
 
-    def upload_file(self):
-        # Open file dialog to select a CSV file
-        root = tk.Tk()
-        root.withdraw()
-        file_path = filedialog.askopenfilename()
+        self.csvFilePath = ""
+        self.credentials_path = ""
 
+        self.window = tk.Tk()
+        self.window.title("Tynances")
+        self.window.geometry("300x200")
+
+       
+        
+        #CSV Filepath TextBox
+        self.csv_text_box = tk.Entry(self.window, width=30)
+        self.csv_text_box.pack(pady=10)
+
+         # Upload CSV Button
+        self.upload_csv_button = tk.Button(self.window, width=30, text="Upload CSV File", command=self.on_choose_csv)
+        self.upload_csv_button.pack(pady=10)
+
+        # Credentials Filepath Text Box
+        self.credentials_path_text_box = tk.Entry(self.window, width=30)
+        self.credentials_path_text_box.pack(pady=10)
+
+        #Get Credentials Button
+        self.get_credentials_button = tk.Button(self.window, width=30, text="Upload Credentials JSON")
+        self.get_credentials_button.pack(pady=10)
+
+        # Do The Thing button
+        self.action_button = tk.Button(self.window, width=30, text="Populate Sheet", command=self.on_populate_sheet)
+        self.action_button.pack(pady=10)
+
+    def on_choose_csv(self):
+        filepath = filedialog.askopenfilename()
+        if(os.path.exists(filepath)):
+            self.csvFilePath = filepath
+            self.csv_text_box.insert(0, filepath)
+
+    def on_get_credentials_json(self):
+        filepath = filedialog.askopenfilename()
+        if(os.path.exists(filepath)):
+            self.credentials_path = filepath
+            self.credentials_path_text_box.insert(0, filepath)
+
+    def on_populate_sheet(self):
         # Read the CSV file
-        df = pd.read_csv(file_path)
+        df = pd.read_csv(self.csvFilePath)
 
         # Categorize data
         category_data = self.category_sorter.categorize_data(df)
@@ -31,3 +67,6 @@ class FileUploader:
                 self.sheet_handler.update_worksheet(worksheet, category_data)
         else:
             print("No worksheet name found in .env file.")
+
+    def run(self):
+        self.window.mainloop()
