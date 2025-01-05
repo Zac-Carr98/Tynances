@@ -1,15 +1,9 @@
-import os, shutil
-import pandas as pd
+import helper as hp
 
 from flask import Flask, send_file, request, url_for
 from werkzeug.utils import redirect
 
 app = Flask(__name__)
-
-UPLOAD_FOLDER = 'uploads'
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
 
 @app.route('/')
 def index():
@@ -134,7 +128,7 @@ def upload_form():
 <div class="container">
     <h3>Upload JSON and CSV then click the populate button to update your spreadsheet!</h3>
 
-    <form action="/csv-formatting" method="post" enctype="multipart/form-data">
+    <form action="/populate-sheet" method="post" enctype="multipart/form-data">
         <div class="mb-3">
             <label for="credentials" class="form-label">Upload Credentials (JSON):</label>
             <div class="file-input-wrapper">
@@ -182,21 +176,18 @@ def upload_form():
 '''
 
 
-@app.route('/csv-formatting', methods=['POST'])
+@app.route('/populate-sheet', methods=['POST'])
 def upload_files():
     # Get the files from the form
     credentials_file = request.files['credentials']
     data_file = request.files['data']
     month = request.form['Month']
 
-    if not credentials_file or not data_file:
+    if hp.execute(credentials_file, data_file, month):
+        return redirect(url_for('success'))
+    
+    else:
         return 'Both files are required', 400
-
-    formatted_csv = format_csv(data_file)
-    formatted_csv.to_csv('output.csv', index=False)
-    print(month)
-
-    return redirect(url_for('success'))
 
 
 @app.route('/success')
@@ -291,28 +282,6 @@ def success():
 @app.route('/downloads')
 def download_file():
     return send_file("test.pdf", as_attachment=True)
-
-
-def format_csv(file):
-    # input file
-
-    # Read the CSV into dataframe
-    df = pd.read_csv(file, skiprows=3)
-
-    # Drop first transaction number column
-    df = df.drop(df.columns[0], axis=1)
-
-    # Check column 5 for values
-    positive = df.iloc[:, 4] > 0
-
-    # Shift column 5 values into column 4
-    df.loc[positive, df.columns[3]] = df.loc[positive, df.columns[4]]
-
-    # Delete last 4 columns
-    deleted_columns = [4, 5, 6, 7]
-
-    # Final dataframe to use
-    return df.drop(df.columns[deleted_columns], axis=1)
 
 
 if __name__ == '__main__':
