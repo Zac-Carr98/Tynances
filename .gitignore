@@ -10,3 +10,13 @@ __pycache__/CategorySorter.cpython-311.pyc
 __pycache__/FileUploader.cpython-311.pyc
 __pycache__/GoogleSheetHandler.cpython-311.pyc
 __pycache__/helper.cpython-311.pyc
+tutorial/flaskr/__pycache__/auth.cpython-311.pyc
+tutorial/flaskr/__pycache__/__init__.cpython-311.pyc
+tutorial/flaskr/__pycache__/blog.cpython-311.pyc
+tutorial/flaskr/__pycache__/db.cpython-311.pyc
+tutorial/tests/__pycache__/conftest.cpython-311-pytest-8.3.4.pyc
+tutorial/tests/__pycache__/test_auth.cpython-311-pytest-8.3.4.pyc
+tutorial/tests/__pycache__/test_blog.cpython-311-pytest-8.3.4.pyc
+tutorial/tests/__pycache__/test_db.cpython-311-pytest-8.3.4.pyc
+tutorial/tests/__pycache__/test_factory.cpython-311-pytest-8.3.4.pyc
+tutorial/.coverage
