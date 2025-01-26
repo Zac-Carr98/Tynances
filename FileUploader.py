@@ -1,5 +1,6 @@
 import pandas as pd
 import tkinter as tk
+from tkinter.ttk import *
 from tkinter import filedialog
 import os
 from GoogleSheetHandler import GoogleSheetHandler
@@ -13,7 +14,7 @@ class FileUploader:
 
         self.window = tk.Tk()
         self.window.title("Tynances")
-        self.window.geometry("500x200")
+        self.window.geometry("375x120")
         
         self.worksheet_name = tk.StringVar()
         #CSV Filepath TextBox
@@ -32,6 +33,12 @@ class FileUploader:
         tk.Label(self.window, text="Worksheet Title: ").grid(row=2, column=0, sticky="w")
         self.worksheet_name_text_box = tk.Entry(self.window, width=30, textvariable=self.worksheet_name)
         self.worksheet_name_text_box.grid(row=2, column=1)
+
+        # self.month_combo = Combobox(self.window, textvariable=self.worksheet_name)
+        # self.month_combo['values'] = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+        # self.month_combo.grid(row=2, column=1)
+
+
 
         # Do The Thing button
         self.action_button = tk.Button(self.window, width=30, text="Populate Sheet", command=self.on_populate_sheet).grid(row=3, column=0, columnspan=3)

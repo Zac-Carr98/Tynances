@@ -37,6 +37,9 @@ class GoogleSheetHandler:
 
     def update_worksheet(self, category_data, padding_rows=0, padding_cols=7):
 
+        if self.worksheet is None:
+            return
+        
         self.worksheet.clear()
 
         # Prepare headers and data
